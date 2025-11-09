@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FE Trolling GUI (Universal Scripts)</title>
+<style>
+  :root{
+    --bg:#f4f4f9;
+    --card:#ffffff;
+    --accent:#007bff;
+    --accent-dark:#0056b3;
+    --success:#28a745;
+  }
+  html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+  .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;}
+  .card{width:100%;max-width:760px;background:var(--card);border-radius:12px;box-shadow:0 8px 28px rgba(16,24,40,0.08);padding:20px;box-sizing:border-box;text-align:left;}
+  h1{margin:0 0 12px 0;font-size:20px;line-height:1.1}
+  pre{margin:0;background:#f0f0f0;border-radius:8px;padding:14px;overflow:auto;max-height:360px;white-space:pre-wrap;word-wrap:break-word;user-select: all;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono", monospace;font-size:13px;color:#111827;}
+  .controls{margin-top:14px;display:flex;gap:10px;align-items:center;}
+  button.copy{background:var(--accent);color:white;border:none;padding:10px 16px;border-radius:8px;font-size:15px;cursor:pointer;transition:background .18s,transform .08s;}
+  button.copy:hover{background:var(--accent-dark)}
+  @media(max-width:480px){pre{font-size:12px}button.copy{width:100%}.controls{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="main">
+      <h1>FE Trolling GUI (Universal Scripts)</h1>
+
+      <pre id="codeBox">loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub/main/FE%20Trolling%20GUI.luau"))()</pre>
+
+      <div class="controls">
+        <button class="copy" id="copyBtn">Copy Text</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const codeBox = document.getElementById('codeBox');
+  const copyBtn = document.getElementById('copyBtn');
+
+  function getCodeText(){ return codeBox.textContent; }
+
+  function showFeedback(){
+    const orig = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    copyBtn.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--success') || '#28a745';
+    setTimeout(() => {
+      copyBtn.textContent = orig;
+      copyBtn.style.backgroundColor = '';
+    }, 1600);
+  }
+
+  copyBtn.addEventListener('click', async () => {
+    const text = getCodeText();
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showFeedback();
+        return;
+      } catch (e) {
+        // fallback to DOM copy
+      }
+    }
+
+    try {
+      const t = document.createElement('textarea');
+      t.style.position = 'fixed';
+      t.style.left = '-9999px';
+      t.style.top = '0';
+      t.setAttribute('readonly', '');
+      t.value = text;
+      document.body.appendChild(t);
+      t.select();
+      t.setSelectionRange(0, t.value.length);
+      document.execCommand('copy');
+      document.body.removeChild(t);
+      showFeedback();
+    } catch (err) {
+      alert('Copy failed — please select and copy manually.');
+    }
+  });
+
+  // quick-select when tapping the code block
+  codeBox.addEventListener('click', () => {
+    const range = document.createRange();
+    range.selectNodeContents(codeBox);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  });
+})();
+</script>
+</body>
+</html>
