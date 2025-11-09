@@ -59,28 +59,32 @@
 <body>
 <div class="container">
   <h1>Script by rndm - Buy Gamepasses (Universal Scripts)</h1>
-  <textarea id="scriptText" readonly>getgenv().Color = "default" --[[white,black, brown,green,cyan,blue,pink,purple,red,yellow,orange ]]--
-getgenv().TextColor = "default" --[[ rgb,white,black, brown,green,cyan,blue,pink,purple,red,yellow,orange ]]--
-loadstring(game:HttpGet("https://raw.githubusercontent.com/rndmq/Serverlist/refs/heads/main/Server87"))()</textarea>
+  <textarea id="displayText" readonly></textarea>
   <div class="controls">
     <button class="copy" id="copyBtn">Copy Text</button>
   </div>
 </div>
 
 <script>
-const textarea = document.getElementById('scriptText');
-const button = document.getElementById('copyBtn');
+const originalText = `getgenv().Color = "default" --[[white,black, brown,green,cyan,blue,pink,purple,red,yellow,orange ]]--
+getgenv().TextColor = "default" --[[ rgb,white,black, brown,green,cyan,blue,pink,purple,red,yellow,orange ]]--
+loadstring(game:HttpGet("https://raw.githubusercontent.com/rndmq/Serverlist/refs/heads/main/Server87"))()`;
 
-button.addEventListener('click', async () => {
-  const text = textarea.value;
+// Break URL visually for Safari detection
+const safeDisplayText = originalText.replace(/https:\/\//g, 'https://\u200B'); // zero-width space
 
-  // Modern Clipboard API
+const textarea = document.getElementById('displayText');
+textarea.value = safeDisplayText;
+
+const copyBtn = document.getElementById('copyBtn');
+copyBtn.addEventListener('click', async () => {
+  // Copy the exact original text
   if (navigator.clipboard && window.isSecureContext) {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(originalText);
       showCopied();
       return;
-    } catch(e){ fallbackCopy(); }
+    } catch(e) { fallbackCopy(); }
   } else { fallbackCopy(); }
 
   function fallbackCopy() {
@@ -89,26 +93,24 @@ button.addEventListener('click', async () => {
     try {
       document.execCommand('copy');
       showCopied();
-    } catch(e) {
+    } catch {
       alert('Copy failed. Please copy manually.');
     }
   }
 
   function showCopied() {
-    const original = button.textContent;
-    button.textContent = 'Text copied!';
-    button.style.backgroundColor = '#28a745';
+    const originalBtn = copyBtn.textContent;
+    copyBtn.textContent = 'Text copied!';
+    copyBtn.style.backgroundColor = '#28a745';
     setTimeout(() => {
-      button.textContent = original;
-      button.style.backgroundColor = '#007bff';
+      copyBtn.textContent = originalBtn;
+      copyBtn.style.backgroundColor = '#007bff';
     }, 1800);
   }
 });
 
 // Optional: click on textarea selects all
-textarea.addEventListener('click', () => {
-  textarea.select();
-});
+textarea.addEventListener('click', () => textarea.select());
 </script>
 </body>
 </html>
